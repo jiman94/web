@@ -1,48 +1,38 @@
-plugins {
-    id 'java'
-    id 'idea'
-    id 'application'
-}
-
-group 'com.tech.selenium'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-ext {
-    seleniumVersion = '3.141.59'
-    webdrivermanagerVersion = '4.1.0'
-    junitVersion = '4.13'
-}
-
 repositories {
     mavenCentral()
 }
 
-dependencies {
+ext {
+    junitJupiterVersion  = '5.3.2'
+    seleniumJupiterVersion  = '3.2.1'
+    htmlUnitDriver = '2.28.2'
+}
 
-    compile "org.seleniumhq.selenium:selenium-java:${seleniumVersion}"
-    compile "org.seleniumhq.selenium:selenium-server:${seleniumVersion}"
-    compile "io.github.bonigarcia:webdrivermanager:${webdrivermanagerVersion}"
-	
-    compile group: 'junit', name: 'junit', version: '4.+'
-	
-	compile 'org.seleniumhq.selenium:selenium-chrome-driver:2.53.1'
-	compile 'org.seleniumhq.selenium:selenium-firefox-driver:2.53.1'
-	
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-     //   exclude module: 'junit'
-    }
-   // testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.1')
-   // testCompile('org.junit.jupiter:junit-jupiter-params:5.3.1')
-   // testRuntime('org.junit.jupiter:junit-jupiter-engine:5.3.1')
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
 
+jar {
+    baseName = 'junit5-selenium'
+    version = '1.0.0'
 }
 
 test {
-    systemProperties System.properties
-    dependsOn 'cleanTest'
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
-gradle.startParameter.continueOnFailure = true
+compileTestJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.compilerArgs += '-parameters'
+}
+
+dependencies {
+    testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testCompile("io.github.bonigarcia:selenium-jupiter:${seleniumJupiterVersion}")
+    testCompile("org.seleniumhq.selenium:htmlunit-driver:${htmlUnitDriver}")
+}
